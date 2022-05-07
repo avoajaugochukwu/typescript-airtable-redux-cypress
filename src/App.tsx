@@ -1,6 +1,7 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
+// export const ADD_BOOKING = 'APP/BOOK_TABLE/ADD_BOOKING';
 
 function App() {
   return (
