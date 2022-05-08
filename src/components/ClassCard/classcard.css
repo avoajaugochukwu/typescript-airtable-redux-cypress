@@ -1,0 +1,9 @@
+.card-box {
+  width: 25%;
+  text-align: left;
+  padding: 15px;
+  border: 1px solid #aaa;
+  margin: auto;
+  margin-bottom: 12px;
+  border-radius: 5px;
+}

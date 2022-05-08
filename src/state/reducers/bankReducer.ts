@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/default-param-last */
 import { ActionType } from '../action-types/index';
 import { Action } from '../actions';
 
 const initialState = 0;
 
-const reducer = (action: Action, state: number = initialState): number => {
+const reducer = (state: number = initialState, action: Action): number => {
   switch (action.type) {
     case ActionType.DEPOSIT:
       return state + action.payload;
