@@ -4,7 +4,7 @@ import { nanoid } from 'nanoid';
 import './App.css';
 import ClassCard from './components/ClassCard';
 import useGetStudent from './hooks/useGetStudent';
-import { IStudentRecord } from './interface/IStudent';
+import { IStudent } from './interface/IStudent';
 import { RootState } from './state/reducers';
 
 function App() {
@@ -43,7 +43,7 @@ function App() {
 
       {
         data.map(
-          (classDetails: IStudentRecord) => (
+          (classDetails: IStudent) => (
             <ClassCard
               key={nanoid()}
               classDetails={classDetails}

@@ -6,17 +6,3 @@ enum ActionType {
 }
 
 export default ActionType;
-// async function getRecordsFromAirtable() {
-//   let recordsArray = [];
-
-//   await base('Users').select({
-//     maxRecords: 3,
-//     view: 'Grid view',
-//   }).eachPage((records, fetchNextPage) => {
-//     recordsArray = [...recordsArray, ...records];
-//     fetchNextPage();
-//   })
-//     .catch((error) => { console.error(error); return false; });
-
-//   return recordsArray;
-// }

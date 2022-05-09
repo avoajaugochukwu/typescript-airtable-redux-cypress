@@ -1,4 +1,4 @@
-import { IStudentRecord } from '../../interface/IStudent';
+import { IStudent } from '../../interface/IStudent';
 import ActionType from '../action-types/index';
 
 interface GetStudentRequestedAction {
@@ -6,7 +6,7 @@ interface GetStudentRequestedAction {
 }
 interface GetStudentSuccessAction {
   type: ActionType.GET_STUDENTS_SUCCESS,
-  payload: IStudentRecord[]
+  payload: IStudent[]
 }
 
 interface GetStudentFailedAction {

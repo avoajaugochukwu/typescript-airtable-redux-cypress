@@ -2,11 +2,13 @@ import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { actionCreators } from '../state';
-import { IStudentRecord } from '../interface/IStudent';
+import { IStudent } from '../interface/IStudent';
 import getTitleCase from '../utils/getTitleCase';
 import { getDataForDisplay } from '../utils/getDataForDisplay';
 import { IClassRecord } from '../interface/IClass';
 import getAirtableBase from '../utils/getAirtable';
+
+// import miniExtAirtableUtils from '../utils/airtable.utils';
 
 const useGetStudent = (): [() => void, (studentName: string) => void] => {
   const base = getAirtableBase();
@@ -16,7 +18,7 @@ const useGetStudent = (): [() => void, (studentName: string) => void] => {
     setStudents, getStudentRequested, getStudentFailed, clearStudents,
   } = bindActionCreators(actionCreators, dispatch);
 
-  const [studentRecord, setStudentRecord] = useState<Partial<IStudentRecord[]>>([]);
+  const [studentRecord, setStudentRecord] = useState<Partial<IStudent[]>>([]);
   const [classRecord, setClassRecord] = useState<IClassRecord[]>([]);
 
   const fetchStudentNames = (arrId: any) => {
@@ -28,11 +30,10 @@ const useGetStudent = (): [() => void, (studentName: string) => void] => {
         const studentRecords = records.map((record) => ({ id: record.id, field: record.fields }));
 
         setStudentRecord(studentRecords);
-
-        fetchNextPage();
       } catch (error: any) {
         getStudentFailed('Cannot class mates names');
       }
+      fetchNextPage();
     });
   };
 
@@ -51,11 +52,10 @@ const useGetStudent = (): [() => void, (studentName: string) => void] => {
         );
 
         setClassRecord(classRec as IClassRecord[]);
-
-        fetchNextPage();
       } catch (error:any) {
         getStudentFailed('Cannot fetch class names');
       }
+      fetchNextPage();
     });
   };
 
@@ -68,15 +68,14 @@ const useGetStudent = (): [() => void, (studentName: string) => void] => {
         const [classesRecordId] = records.map((record) => record.fields.Classes);
 
         fetchClassNames(classesRecordId as string[]);
-
-        fetchNextPage();
       } catch (error:any) {
         getStudentFailed('Cannot find this student name');
       }
+      fetchNextPage();
     });
   };
 
-  const getStudents = (studentName: string) => {
+  const getStudents = async (studentName: string) => {
     getStudentRequested();
 
     if (!studentName) {
@@ -86,12 +85,19 @@ const useGetStudent = (): [() => void, (studentName: string) => void] => {
     if (studentName) {
       const studentNameTitle = getTitleCase(studentName);
       fetchStudentClasses(studentNameTitle);
+      // try {
+      //   miniExtAirtableUtils.getStudentClassList(studentNameTitle)
+      //     .then((data) => { console.log(data, 'data'); })
+      //     .catch((err) => console.log(err, 'err'));
+      // } catch (e: any) {
+      //   console.log(' I failed you');
+      // }
     }
   };
 
   useEffect(() => {
     if (studentRecord.length && studentRecord !== undefined && classRecord.length) {
-      const students: IStudentRecord[] = studentRecord as IStudentRecord[];
+      const students: IStudent[] = studentRecord as IStudent[];
       const data = getDataForDisplay(students, classRecord);
       setStudents(data);
     }

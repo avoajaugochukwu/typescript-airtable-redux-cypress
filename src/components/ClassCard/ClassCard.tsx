@@ -1,10 +1,10 @@
 import React, { FC } from 'react';
 import { nanoid } from 'nanoid';
-import { IStudentRecord } from '../../interface/IStudent';
+import { IStudent } from '../../interface/IStudent';
 import './classcard.css';
 
 type Props = {
-  classDetails: IStudentRecord
+  classDetails: IStudent
 };
 
 const ClassCard: FC<Props> = ({ classDetails }) => (

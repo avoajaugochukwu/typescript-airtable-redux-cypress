@@ -1,10 +1,10 @@
 import { IClassRecord } from '../interface/IClass';
-import { IStudentRecord } from '../interface/IStudent';
+import { IStudent } from '../interface/IStudent';
 
 export const addStudentNameArray = (
-  studentRecord:IStudentRecord,
-  students:IStudentRecord[],
-): IStudentRecord => {
+  studentRecord:IStudent,
+  students:IStudent[],
+): IStudent => {
   const myClass = studentRecord;
   myClass.studentName = [];
 
@@ -19,9 +19,9 @@ export const addStudentNameArray = (
 };
 
 export const getDataForDisplay = (
-  students:IStudentRecord[],
+  students:IStudent[],
   classes:IClassRecord[],
-): IStudentRecord[] => {
+): IStudent[] => {
   const data = classes.map((cla:any) => addStudentNameArray(cla, students));
   return data;
 };

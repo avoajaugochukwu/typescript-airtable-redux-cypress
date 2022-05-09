@@ -1,13 +1,12 @@
 import { FieldSet } from 'airtable';
-// import { IClassCard } from './IClass';
 
 export interface IStudentState {
-  data: IStudentRecord[];
+  data: IStudent[];
   loading: boolean;
   error: null | string;
 }
 
-export interface IStudentRecord {
+export interface IStudent {
   id: string;
   field: FieldSet;
   Name?: string;

@@ -1,9 +1,9 @@
 import { Dispatch } from 'redux';
-import { IStudentRecord } from '../../interface/IStudent';
+import { IStudent } from '../../interface/IStudent';
 import ActionType from '../action-types';
 import { Action } from '../actions/index';
 
-export const setStudents = (students: IStudentRecord[]) => (dispatch: Dispatch<Action>) => {
+export const setStudents = (students: IStudent[]) => (dispatch: Dispatch<Action>) => {
   dispatch({
     type: ActionType.GET_STUDENTS_SUCCESS,
     payload: students,
