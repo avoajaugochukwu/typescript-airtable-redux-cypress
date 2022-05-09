@@ -1,17 +1,25 @@
-import { ActionType } from "../action-types/index"
+import { IStudentRecord } from '../../interface/IStudent';
+import ActionType from '../action-types/index';
 
-interface DepositAction {
-    type: ActionType.DEPOSIT,
-    payload: number
+interface GetStudentRequestedAction {
+  type: ActionType.GET_STUDENTS_REQUESTED,
+}
+interface GetStudentSuccessAction {
+  type: ActionType.GET_STUDENTS_SUCCESS,
+  payload: IStudentRecord[]
 }
 
-interface WithdrawAction {
-    type: ActionType.WITHDRAW,
-    payload: number
+interface GetStudentFailedAction {
+  type: ActionType.GET_STUDENTS_FAILED,
+  payload: string
 }
 
-interface BankruptAction {
-    type: ActionType.BANKRUPT
+interface ClearStudents {
+  type: ActionType.CLEAR_STUDENTS
 }
 
-export type Action = DepositAction | WithdrawAction | BankruptAction;
+export type Action =
+| GetStudentSuccessAction
+| GetStudentRequestedAction
+| GetStudentFailedAction
+| ClearStudents;

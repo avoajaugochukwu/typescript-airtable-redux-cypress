@@ -1,4 +1,5 @@
 import React, { FC } from 'react';
+import { nanoid } from 'nanoid';
 import { IStudentRecord } from '../../interface/IStudent';
 import './classcard.css';
 
@@ -15,7 +16,7 @@ const ClassCard: FC<Props> = ({ classDetails }) => (
       </div>
       <div>
         <p><b>Students</b></p>
-        <p>{classDetails?.studentName?.map((name) => <span>{`${name}, `}</span>)}</p>
+        <p>{classDetails?.studentName?.map((name) => <span key={nanoid()}>{`${name}, `}</span>)}</p>
       </div>
     </div>
   </div>

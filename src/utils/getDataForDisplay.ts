@@ -22,6 +22,6 @@ export const getDataForDisplay = (
   students:IStudentRecord[],
   classes:IClassRecord[],
 ): IStudentRecord[] => {
-  const a = classes.map((cla:any) => addStudentNameArray(cla, students));
-  return a;
+  const data = classes.map((cla:any) => addStudentNameArray(cla, students));
+  return data;
 };

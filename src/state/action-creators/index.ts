@@ -1,23 +1,30 @@
 import { Dispatch } from 'redux';
-import { ActionType } from '../action-types';
+import { IStudentRecord } from '../../interface/IStudent';
+import ActionType from '../action-types';
 import { Action } from '../actions/index';
 
-export const depositMoney = (amount: number) => (dispatch: Dispatch<Action>) => {
+export const setStudents = (students: IStudentRecord[]) => (dispatch: Dispatch<Action>) => {
   dispatch({
-    type: ActionType.DEPOSIT,
-    payload: amount,
+    type: ActionType.GET_STUDENTS_SUCCESS,
+    payload: students,
   });
 };
 
-export const withdrawMoney = (amount: number) => (dispatch: Dispatch<Action>) => {
+export const getStudentRequested = () => (dispatch: Dispatch<Action>) => {
   dispatch({
-    type: ActionType.WITHDRAW,
-    payload: amount,
+    type: ActionType.GET_STUDENTS_REQUESTED,
   });
 };
 
-export const bankrupt = () => (dispatch: Dispatch<Action>) => {
+export const getStudentFailed = (error: string) => (dispatch: Dispatch<Action>) => {
   dispatch({
-    type: ActionType.BANKRUPT,
+    type: ActionType.GET_STUDENTS_FAILED,
+    payload: error,
+  });
+};
+
+export const clearStudents = () => (dispatch: Dispatch<Action>) => {
+  dispatch({
+    type: ActionType.CLEAR_STUDENTS,
   });
 };
