@@ -47,7 +47,6 @@ const fetchClassById = async (
       })
       .eachPage((records, fetchNextPage) => {
         try {
-          console.log(records, 'records');
           if (records.length === 0) {
             reject(new Error('Cannot fetch class details'));
           }
@@ -98,7 +97,6 @@ const fetchStudentNameByClass = async (
             },
           );
 
-          console.log(studentRecords);
           resolve(studentRecords);
         } catch (error: any) {
           reject(new Error('Cannot find class mates names'));

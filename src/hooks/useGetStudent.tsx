@@ -1,82 +1,24 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { actionCreators } from '../state';
-import { IStudent } from '../interface/IStudent';
+import { RootState } from '../state/reducers';
+
 import getTitleCase from '../utils/getTitleCase';
-import { getDataForDisplay, getDataForDisplayNew } from '../utils/getDataForDisplay';
-import { IClassRecord } from '../interface/IClass';
-import getAirtableBase from '../utils/getAirtable';
-import IClassFieldSet from '../interface/IClassFieldSet';
-
 import miniExtAirtableUtils from '../utils/airtable.utils';
-import IStudentsFieldSet from '../interface/IStudentFieldSet';
+import { getDataForDisplay } from '../utils/getDataForDisplay';
 
-const useGetStudent = (): [() => void, (studentName: string) => void] => {
-  const base = getAirtableBase();
+import IClassFieldSet from '../interface/IClassFieldSet';
+import IStudentsFieldSet from '../interface/IStudentFieldSet';
+import { IStudentState } from '../interface/IStudent';
+
+const useGetStudent = (): [IStudentState, () => void, (studentName: string) => void] => {
+  const { data, loading, error } = useSelector((state: RootState) => state.students);
+
   const dispatch = useDispatch();
 
   const {
     setStudents, getStudentRequested, getStudentFailed, clearStudents,
   } = bindActionCreators(actionCreators, dispatch);
-
-  const [studentRecord, setStudentRecord] = useState<Partial<IStudent[]>>([]);
-  const [classRecord, setClassRecord] = useState<IClassRecord[]>([]);
-
-  const fetchStudentNames = (arrId: any) => {
-    base('Students').select({
-      filterByFormula: `OR(${arrId.map((id: string) => `RECORD_ID()='${id}'`).join(',')})`,
-      view: 'Grid view',
-    }).eachPage((records, fetchNextPage) => {
-      try {
-        const studentRecords = records.map((record) => ({ id: record.id, field: record.fields }));
-
-        setStudentRecord(studentRecords);
-      } catch (error: any) {
-        getStudentFailed('Cannot class mates names');
-      }
-      fetchNextPage();
-    });
-  };
-
-  const fetchClassNames = (arr: string[]) => {
-    base('Classes').select({
-      filterByFormula: `OR(${arr.map((id: string) => `RECORD_ID()='${id}'`).join(',')})`,
-      view: 'Grid view',
-    }).eachPage((records, fetchNextPage) => {
-      try {
-        const flatStudentList = records.map((record) => record.fields.Students).flat();
-
-        fetchStudentNames(flatStudentList);
-
-        const classRec = records.map(
-          (record) => ({ Name: record.fields.Name, Students: record.fields.Students }),
-        );
-
-        setClassRecord(classRec as IClassRecord[]);
-      } catch (error:any) {
-        getStudentFailed('Cannot fetch class names');
-      }
-      fetchNextPage();
-    });
-  };
-
-  const fetchStudentClasses = (studentName: string) => {
-    base('Students').select({
-      filterByFormula: `({Name} = '${studentName}')`,
-      view: 'Grid view',
-    }).eachPage((records, fetchNextPage) => {
-      try {
-        const [classesRecordId] = records.map((record) => record.fields.Classes);
-
-        fetchClassNames(classesRecordId as string[]);
-      } catch (error:any) {
-        getStudentFailed('Cannot find this student name');
-      }
-      fetchNextPage();
-    });
-  };
 
   const getStudents = async (studentName: string) => {
     getStudentRequested();
@@ -87,44 +29,33 @@ const useGetStudent = (): [() => void, (studentName: string) => void] => {
 
     if (studentName) {
       const studentNameTitle = getTitleCase(studentName);
-      fetchStudentClasses(studentNameTitle);
+
       try {
-        // miniExtAirtableUtils.getStudentClassList(studentNameTitle)
-        //   .then((data) => { console.log(data, 'data'); })
-        //   .catch((err) => console.log(err, 'err'));
-        const studentClassRecord: IClassFieldSet = await miniExtAirtableUtils.fetchRecordList('Students', 'Name', studentNameTitle);
-        console.log(studentClassRecord.Classes, 'studentClassRecord');
+        const studentClassRecord: IClassFieldSet = await miniExtAirtableUtils
+          .fetchRecordList('Students', 'Name', studentNameTitle);
+
         if (studentClassRecord.Classes) {
-          const a: IStudentsFieldSet[] = await miniExtAirtableUtils.fetchClassById('Classes', studentClassRecord.Classes);
-          console.log(a, 'a');
+          const studentClassDetails: IStudentsFieldSet[] = await miniExtAirtableUtils
+            .fetchClassById('Classes', studentClassRecord.Classes);
 
-          const b = await miniExtAirtableUtils.fetchStudentNameByClass(a);
+          const studentDetails: IClassFieldSet[] = await miniExtAirtableUtils
+            .fetchStudentNameByClass(studentClassDetails);
 
-          const c = await getDataForDisplayNew(a, b);
-          console.log(c, 'c');
+          const classWithStudentName = await getDataForDisplay(studentClassDetails, studentDetails);
+
+          setStudents(classWithStudentName);
         }
-      } catch (e: any) {
-        console.log(' I failed you');
+      } catch (err: any) {
+        getStudentFailed(err);
       }
     }
   };
-
-  useEffect(() => {
-    if (studentRecord.length && studentRecord !== undefined && classRecord.length) {
-      const students: IStudent[] = studentRecord as IStudent[];
-      const data = getDataForDisplay(students, classRecord);
-      setStudents(data);
-      // -------
-      // console.log(studentRecord, 'studentRecord');
-      // console.log(classRecord, 'classRecord');
-    }
-  }, [studentRecord, classRecord]);
 
   const startAgain = () => {
     clearStudents();
   };
 
-  return [startAgain, getStudents];
+  return [{ data, loading, error }, startAgain, getStudents];
 };
 
 export default useGetStudent;

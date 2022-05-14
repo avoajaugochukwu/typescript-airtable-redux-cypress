@@ -1,19 +1,16 @@
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
 import { nanoid } from 'nanoid';
 import './App.css';
 import ClassCard from './components/ClassCard';
 import useGetStudent from './hooks/useGetStudent';
-import { IStudent } from './interface/IStudent';
-import { RootState } from './state/reducers';
+import IStudentsFieldSet from './interface/IStudentFieldSet';
 
 function App() {
-  const { data, loading, error } = useSelector((state: RootState) => state.students);
   const [searchTerm, setSearchTerm] = useState('');
 
-  const [startAgain, getStudents] = useGetStudent();
+  const [{ data, loading, error }, startAgain, getStudents] = useGetStudent();
 
-  const login = async () => {
+  const login = () => {
     getStudents(searchTerm);
   };
 
@@ -24,6 +21,7 @@ function App() {
 
   return (
     <div className="App">
+      {/* Error while fetching */}
       {error && (
         <div>
           An error occured:
@@ -31,19 +29,21 @@ function App() {
           {error}
         </div>
       )}
+      {/* Loading */}
       {loading && (<p><b>Loading</b></p>)}
       {
         data.length === 0 && !loading && !error && (
           <div>
             <input type="text" data-cy="search-input" value={searchTerm} onChange={({ target: { value } }) => setSearchTerm(value)} />
-            <button type="submit" data-cy="login-button" onClick={login}>login</button>
+            <button type="submit" data-cy="login-button" onClick={() => login()}>login</button>
           </div>
         )
       }
 
+      {/* Data available */}
       {
         data.map(
-          (classDetails: IStudent) => (
+          (classDetails: IStudentsFieldSet) => (
             <ClassCard
               key={nanoid()}
               classDetails={classDetails}
@@ -51,7 +51,7 @@ function App() {
           ),
         )
       }
-
+      {/* Clear data button */}
       {data.length > 0 && !loading && <button type="submit" onClick={() => clearStudent()}>logout</button>}
     </div>
   );
