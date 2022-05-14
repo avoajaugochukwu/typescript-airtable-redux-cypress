@@ -7,6 +7,7 @@ import getTitleCase from '../utils/getTitleCase';
 import { getDataForDisplay } from '../utils/getDataForDisplay';
 import { IClassRecord } from '../interface/IClass';
 import getAirtableBase from '../utils/getAirtable';
+import IClassFieldSet from '../interface/IClassFieldSet';
 
 import miniExtAirtableUtils from '../utils/airtable.utils';
 
@@ -86,11 +87,17 @@ const useGetStudent = (): [() => void, (studentName: string) => void] => {
       const studentNameTitle = getTitleCase(studentName);
       fetchStudentClasses(studentNameTitle);
       try {
-        miniExtAirtableUtils.getStudentClassList(studentNameTitle)
-          .then((data) => { console.log(data, 'data'); })
-          .catch((err) => console.log(err, 'err'));
-        const c = await miniExtAirtableUtils.getList('Students', 'Name', studentNameTitle);
-        console.log(c, 'c');
+        // miniExtAirtableUtils.getStudentClassList(studentNameTitle)
+        //   .then((data) => { console.log(data, 'data'); })
+        //   .catch((err) => console.log(err, 'err'));
+        const studentClassRecord: IClassFieldSet = await miniExtAirtableUtils.fetchRecordList('Students', 'Name', studentNameTitle);
+        console.log(studentClassRecord.Classes, 'studentClassRecord');
+        if (studentClassRecord.Classes) {
+          const a = await miniExtAirtableUtils.fetchClassById('Classes', studentClassRecord.Classes);
+          console.log(a, 'a');
+
+          await miniExtAirtableUtils.fetchStudentNameByClass(a);
+        }
       } catch (e: any) {
         console.log(' I failed you');
       }
