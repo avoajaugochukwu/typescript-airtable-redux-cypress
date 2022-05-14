@@ -1,15 +1,17 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { actionCreators } from '../state';
 import { IStudent } from '../interface/IStudent';
 import getTitleCase from '../utils/getTitleCase';
-import { getDataForDisplay } from '../utils/getDataForDisplay';
+import { getDataForDisplay, getDataForDisplayNew } from '../utils/getDataForDisplay';
 import { IClassRecord } from '../interface/IClass';
 import getAirtableBase from '../utils/getAirtable';
 import IClassFieldSet from '../interface/IClassFieldSet';
 
 import miniExtAirtableUtils from '../utils/airtable.utils';
+import IStudentsFieldSet from '../interface/IStudentFieldSet';
 
 const useGetStudent = (): [() => void, (studentName: string) => void] => {
   const base = getAirtableBase();
@@ -93,10 +95,13 @@ const useGetStudent = (): [() => void, (studentName: string) => void] => {
         const studentClassRecord: IClassFieldSet = await miniExtAirtableUtils.fetchRecordList('Students', 'Name', studentNameTitle);
         console.log(studentClassRecord.Classes, 'studentClassRecord');
         if (studentClassRecord.Classes) {
-          const a = await miniExtAirtableUtils.fetchClassById('Classes', studentClassRecord.Classes);
+          const a: IStudentsFieldSet[] = await miniExtAirtableUtils.fetchClassById('Classes', studentClassRecord.Classes);
           console.log(a, 'a');
 
-          await miniExtAirtableUtils.fetchStudentNameByClass(a);
+          const b = await miniExtAirtableUtils.fetchStudentNameByClass(a);
+
+          const c = await getDataForDisplayNew(a, b);
+          console.log(c, 'c');
         }
       } catch (e: any) {
         console.log(' I failed you');
@@ -109,6 +114,9 @@ const useGetStudent = (): [() => void, (studentName: string) => void] => {
       const students: IStudent[] = studentRecord as IStudent[];
       const data = getDataForDisplay(students, classRecord);
       setStudents(data);
+      // -------
+      // console.log(studentRecord, 'studentRecord');
+      // console.log(classRecord, 'classRecord');
     }
   }, [studentRecord, classRecord]);
 

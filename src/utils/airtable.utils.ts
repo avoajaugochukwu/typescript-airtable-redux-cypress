@@ -1,4 +1,3 @@
-/* eslint-disable consistent-return */
 import { FieldSet } from 'airtable';
 import IClassFieldSet from '../interface/IClassFieldSet';
 import IStudentsFieldSet from '../interface/IStudentFieldSet';
@@ -48,12 +47,14 @@ const fetchClassById = async (
       })
       .eachPage((records, fetchNextPage) => {
         try {
+          console.log(records, 'records');
           if (records.length === 0) {
             reject(new Error('Cannot fetch class details'));
           }
 
           const classRecord: IStudentsFieldSet[] = records.map(
             (record) => <IStudentsFieldSet>{
+              id: record.id,
               Name: record.fields.Name,
               Students: record.fields.Students,
             },
@@ -68,7 +69,9 @@ const fetchClassById = async (
   });
 };
 
-const fetchStudentNameByClass = async (classRecord: IStudentsFieldSet[]) => {
+const fetchStudentNameByClass = async (
+  classRecord: IStudentsFieldSet[],
+): Promise<IClassFieldSet[]> => {
   const base = getAirtableBase();
 
   const allStudentId: string[] = classRecord.map((c) => c.Students).flat();
@@ -106,31 +109,3 @@ const fetchStudentNameByClass = async (classRecord: IStudentsFieldSet[]) => {
 };
 
 export default { fetchRecordList, fetchClassById, fetchStudentNameByClass };
-
-// const getStudentClassList = async (
-//   studentName: string,
-// ): Promise<Records<FieldSet>> => {
-//   const base = getAirtableBase();
-
-//   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-//   return new Promise((resolve, reject) => {
-//     base('Students')
-//       .select({
-//         filterByFormula: `({Name} = '${studentName}')`,
-//         view: 'Grid view',
-//       })
-//       .eachPage((records, fetchNextPage) => {
-//         try {
-//           fetchNextPage();
-
-//           if (records.length === 0) {
-//             reject(new Error('Cannot find this student name'));
-//           }
-
-//           resolve(records);
-//         } catch (error: any) {
-//           reject(new Error('Cannot find this student name'));
-//         }
-//       });
-//   });
-// };
