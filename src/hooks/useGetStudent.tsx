@@ -8,7 +8,7 @@ import { getDataForDisplay } from '../utils/getDataForDisplay';
 import { IClassRecord } from '../interface/IClass';
 import getAirtableBase from '../utils/getAirtable';
 
-// import miniExtAirtableUtils from '../utils/airtable.utils';
+import miniExtAirtableUtils from '../utils/airtable.utils';
 
 const useGetStudent = (): [() => void, (studentName: string) => void] => {
   const base = getAirtableBase();
@@ -85,13 +85,15 @@ const useGetStudent = (): [() => void, (studentName: string) => void] => {
     if (studentName) {
       const studentNameTitle = getTitleCase(studentName);
       fetchStudentClasses(studentNameTitle);
-      // try {
-      //   miniExtAirtableUtils.getStudentClassList(studentNameTitle)
-      //     .then((data) => { console.log(data, 'data'); })
-      //     .catch((err) => console.log(err, 'err'));
-      // } catch (e: any) {
-      //   console.log(' I failed you');
-      // }
+      try {
+        miniExtAirtableUtils.getStudentClassList(studentNameTitle)
+          .then((data) => { console.log(data, 'data'); })
+          .catch((err) => console.log(err, 'err'));
+        const c = await miniExtAirtableUtils.getList('Students', 'Name', studentNameTitle);
+        console.log(c, 'c');
+      } catch (e: any) {
+        console.log(' I failed you');
+      }
     }
   };
 
